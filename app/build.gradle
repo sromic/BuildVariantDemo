@@ -1,0 +1,115 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
+
+    defaultConfig {
+        applicationId "com.manijshrestha.buildvariantdemo"
+        minSdkVersion 21
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    productFlavors {
+        demo {
+            applicationId = "com.manijshrestha.weatherdemo.demo"
+            resValue "string", "app_name", "Demo App"
+        }
+        full {
+            applicationId = "com.manijshrestha.weatherdemo.full"
+            resValue "string", "app_name", "Full App"
+        }
+    }
+}
+
+//######################## START DEBUG TASKS ##################################
+//some debug tasks
+
+task getDebugTaskFile << {
+    println 'getDebugFile'
+}
+
+task extractDebugTaskFromZip << {
+    println 'extractDebugFromZip'
+}
+
+//container task which contains all custom debug tasks
+task mainDebug << {
+    println 'running mainDebug task'
+}
+
+//attach all custom debug tasks to container task depending on generic task name
+mainDebug.dependsOn{
+    tasks.findAll { task -> task.name.contains('DebugTask') }
+}
+
+//########################### END ######################################
+
+//########################### START RELEASE TASKS#########################################
+//some release tasks
+
+task extractReleaseTaskFromZip << {
+    println 'extractReleaseTaskFromZip'
+}
+
+task getReleaseTaskFile << {
+    println 'getReleaseTaskFile'
+}
+
+//container task which contains all custom release tasks
+task mainRelease << {
+    println 'running mainRelease task'
+}
+
+//Attach release tasks to container task depending on generic task name
+mainRelease.dependsOn {
+    tasks.findAll { task -> task.name.contains('ReleaseTask')}
+}
+
+//########################### END #########################################
+
+
+//########################## EXECUTE CUSTOM TASKS ###########################
+//execute Release and Debug tasks to appropriate assamble task
+assembleRelease {
+    doLast {
+        tasks.mainRelease.execute()
+    }
+}
+
+assembleDebug {
+    doLast {
+        tasks.mainDebug.execute()
+    }
+}
+
+/*afterEvaluate {
+    tasks.assembleDemoDebug.dependsOn mainDebug
+    //tasks.mainDebug.execute()
+}*/
+
+
+//attach mainRelease and mainDebug tasks to appropriate *Build tasks
+/*tasks.whenTaskAdded { task ->
+    if (task.name.contains('Debug') && task.name.contains('compile')) {
+        task.finalizedBy mainDebug
+    }
+    else if (task.name.contains('Release') && task.name.contains('compile'))
+        task.finalizedBy mainRelease
+}*/
+
+//########################### END ################################################
+
+dependencies {
+    compile 'com.android.support:appcompat-v7:22.0.0'
+    compile 'com.squareup.retrofit:retrofit:1.9.0'
+}
