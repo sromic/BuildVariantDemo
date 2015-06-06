@@ -99,13 +99,13 @@ assembleDebug {
 
 
 //attach mainRelease and mainDebug tasks to appropriate *Build tasks
-/*tasks.whenTaskAdded { task ->
+tasks.whenTaskAdded { task ->
     if (task.name.contains('Debug') && task.name.contains('compile')) {
-        task.finalizedBy mainDebug
+        task.dependsOn mainDebug
     }
     else if (task.name.contains('Release') && task.name.contains('compile'))
-        task.finalizedBy mainRelease
-}*/
+        task.dependsOn mainRelease
+}
 
 //########################### END ################################################
 
